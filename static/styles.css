@@ -1302,16 +1302,8 @@ body {
     }
 }
 
-function setBetAmount(amount) {
-    document.getElementById('betAmount').value = amount;
-}
-
-function adjustAmount(change) {
-    const input = document.getElementById('betAmount');
-    let newValue = parseInt(input.value) + change;
-    if (newValue < 1) newValue = 1;
-    input.value = newValue;
-}
+/* Move these JavaScript functions to a separate .js file */
+/* JavaScript code has been moved to a separate .js file */
 
 .landing-logo {
     width: 200px;

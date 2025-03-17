@@ -128,6 +128,16 @@ class Database:
                 if bet_result[0] != 'active':
                     return False, "Esta apuesta ya no está activa"
 
+                # Verificar si el usuario ya ha apostado en cualquier lado de esta apuesta
+                cursor.execute("""
+                    SELECT side FROM bet_participants 
+                    WHERE bet_id = ? AND username = ?
+                """, (bet_id, username))
+                existing_bet = cursor.fetchone()
+                
+                if existing_bet:
+                    return False, "Ya has participado en esta apuesta. No puedes apostar en ambos lados."
+
                 # Iniciar transacción
                 cursor.execute("BEGIN TRANSACTION")
                 try:
