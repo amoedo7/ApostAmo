@@ -231,12 +231,29 @@ def place_bet(bet_id, user_balance=None):
             'message': str(e)
         }), 500
 
-@app.route('/judge/<bet_id>/<token>')
-def judge_view(bet_id, token):
-    if not db.verify_judge(bet_id, token):
-        return "Acceso denegado", 403
-    bet = db.get_bet(bet_id)
-    return render_template('judge.html', bet=bet)
+@app.route('/bet/<bet_id>/judge/<token>')
+def judge_bet(bet_id, token):
+    try:
+        # Verificar token del juez
+        if not db.verify_judge(bet_id, token):
+            return render_template('error.html', 
+                message="Acceso denegado. Token de juez inválido.")
+        
+        # Obtener información de la apuesta
+        bet = db.get_bet(bet_id)
+        if not bet:
+            return render_template('error.html', 
+                message="Apuesta no encontrada")
+            
+        if bet['status'] != 'active':
+            return render_template('error.html', 
+                message="Esta apuesta ya ha sido finalizada")
+        
+        return render_template('judge.html', bet=bet, token=token)
+    except Exception as e:
+        print(f"Error en judge_bet: {e}")
+        return render_template('error.html', 
+            message="Error al cargar la página del juez")
 
 @app.route('/judge/<bet_id>/<token>/decide', methods=['POST'])
 def judge_decide(bet_id, token):
