@@ -32,12 +32,11 @@
                 </div>
             </div>
 
-            <div class="link-box important">
-                <h4>👨‍⚖️ Link para el juez:</h4>
-                <p>⚠️ IMPORTANTE: Este enlace es para el juez que decidirá el resultado. Guárdalo y compártelo SOLO con el juez:</p>
-                <div class="copy-section">
-                    <input type="text" id="judgeLink" value="{{ urls.judge_url }}" readonly>
-                    <button onclick="copyToClipboard('judgeLink')" class="copy-btn">Copiar</button>
+            <div class="link-item">
+                <h3>Link para el Juez:</h3>
+                <div class="link-box">
+                    <input type="text" readonly value="{{ request.host_url }}bet/{{ bet.id }}/judge/{{ bet.judge_token }}" id="judgeLink">
+                    <button onclick="copyToClipboard('judgeLink')" class="btn-copy">Copiar</button>
                 </div>
             </div>
         </div>
