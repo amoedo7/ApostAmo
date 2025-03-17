@@ -1286,3 +1286,24 @@ function adjustAmount(change) {
     if (newValue < 1) newValue = 1;
     input.value = newValue;
 }
+
+.nav-logo {
+    height: 32px;
+    margin-right: 10px;
+}
+
+.landing-logo {
+    width: 200px;
+    margin-bottom: 2rem;
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+}
+
+/* Animación hover para el logo */
+.nav-logo:hover {
+    transform: scale(1.05);
+    transition: transform 0.2s ease;
+}
