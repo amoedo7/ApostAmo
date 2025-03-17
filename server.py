@@ -120,7 +120,7 @@ def show_links(bet_id, user_balance=None):
     
     urls = {
         'bet_url': f"{request.host_url}bet/{bet_id}",
-        'judge_url': f"{request.host_url}judge/{bet_id}/{bet['judge_token']}"
+        'judge_url': f"{request.host_url}bet/{bet_id}/judge/{bet['judge_token']}"
     }
     return render_template('links.html', urls=urls, bet=bet, user_balance=user_balance)
 
