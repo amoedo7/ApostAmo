@@ -45,13 +45,19 @@ def login_required(f):
 def with_user_data(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        user_balance = None
+        user_balance = 0
         if 'username' in session:
-            user_balance = db.get_user_balance(session['username'])
-        
-        # Añadir user_balance a kwargs
-        kwargs['user_balance'] = user_balance
-        return f(*args, **kwargs)
+            try:
+                user_balance = db.get_user_balance(session['username'])
+                # Si el balance es None o 0, el usuario probablemente no existe
+                if user_balance is None:
+                    session.clear()
+                    return redirect(url_for('login'))
+            except Exception as e:
+                print(f"Error getting user balance: {e}")
+                session.clear()
+                return redirect(url_for('login'))
+        return f(*args, user_balance=user_balance, **kwargs)
     return decorated_function
 
 @app.route('/')
@@ -166,7 +172,7 @@ def login():
 
 @app.route('/logout')
 def logout():
-    session.pop('username', None)
+    session.clear()
     return redirect(url_for('index'))
 
 @app.route('/profile')
@@ -303,6 +309,26 @@ def quick_auth():
 def user_bets(user_balance=None):
     bets = db.get_user_bets(session['username'])
     return render_template('user_bets.html', bets=bets, user_balance=user_balance)
+
+@app.before_request
+def check_user_session():
+    """Verificar que el usuario en sesión existe en la base de datos"""
+    if 'username' in session:
+        try:
+            with db.get_connection() as conn:
+                cursor = conn.cursor()
+                cursor.execute("SELECT username FROM users WHERE username = ?", 
+                             (session['username'],))
+                user = cursor.fetchone()
+                
+                # Si el usuario no existe en la DB pero está en sesión
+                if not user:
+                    # Limpiar la sesión
+                    session.clear()
+                    return redirect(url_for('login'))
+        except Exception as e:
+            print(f"Error verificando sesión: {e}")
+            session.clear()
 
 if __name__ == '__main__':
     try:

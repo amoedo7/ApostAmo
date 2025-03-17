@@ -510,12 +510,16 @@ class Database:
         try:
             with self.get_connection() as conn:
                 cursor = conn.cursor()
-                cursor.execute("SELECT diamonds FROM users WHERE username = ?", (username,))
+                cursor.execute("SELECT diamonds FROM users WHERE username = ?", 
+                             (username,))
                 result = cursor.fetchone()
-                return result['diamonds'] if result else 0
+                if result is None:
+                    # Si el usuario no existe, retornar None en lugar de 0
+                    return None
+                return result['diamonds']
         except Exception as e:
             print(f"Error getting user balance: {e}")
-            return 0
+            return None
     
     def add_diamonds(self, username, amount):
         if username not in self.users:
