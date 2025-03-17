@@ -222,9 +222,80 @@ class Database:
                 if not bet:
                     return False, "Apuesta no disponible o ya finalizada"
                 
-                # Iniciar transacción
+                # Obtener participantes ordenados por tiempo de participación
+                cursor.execute("""
+                    SELECT username, amount, side, participated_at 
+                    FROM bet_participants 
+                    WHERE bet_id = ? 
+                    ORDER BY participated_at ASC
+                """, (bet_id,))
+                participants = cursor.fetchall()
+                
+                # Separar participantes por lado
+                side_a = [p for p in participants if p['side'] == 'a']
+                side_b = [p for p in participants if p['side'] == 'b']
+                
+                # Calcular totales por lado
+                total_a = sum(p['amount'] for p in side_a)
+                total_b = sum(p['amount'] for p in side_b)
+                
+                # Determinar el lado ganador y perdedor
+                if winning_side == 'a':
+                    winning_participants = side_a
+                    losing_participants = side_b
+                    winning_total = total_a
+                    losing_total = total_b
+                else:
+                    winning_participants = side_b
+                    losing_participants = side_a
+                    winning_total = total_b
+                    losing_total = total_a
+                
+                # Equiparar montos
+                amount_to_match = min(winning_total, losing_total)
+                refund_amount = abs(winning_total - losing_total)
+                
                 cursor.execute("BEGIN TRANSACTION")
                 try:
+                    # Si hay exceso en el lado ganador, devolver el exceso a los últimos participantes
+                    if winning_total > losing_total:
+                        remaining_refund = refund_amount
+                        for participant in reversed(winning_participants):
+                            if remaining_refund <= 0:
+                                break
+                                
+                            refund = min(remaining_refund, participant['amount'])
+                            remaining_refund -= refund
+                            
+                            # Devolver diamantes al usuario
+                            cursor.execute("""
+                                UPDATE users 
+                                SET diamonds = diamonds + ? 
+                                WHERE username = ?
+                            """, (refund, participant['username']))
+                            
+                            # Actualizar el monto de la apuesta
+                            cursor.execute("""
+                                UPDATE bet_participants 
+                                SET amount = amount - ? 
+                                WHERE bet_id = ? AND username = ?
+                            """, (refund, bet_id, participant['username']))
+                    
+                    # Calcular y distribuir ganancias
+                    total_pool = amount_to_match * 2  # Pool total después de equiparar
+                    for participant in winning_participants:
+                        # Calcular proporción solo con el monto válido
+                        valid_amount = min(participant['amount'], amount_to_match)
+                        if valid_amount > 0:
+                            proportion = valid_amount / amount_to_match
+                            earnings = round(total_pool * proportion)
+                            
+                            cursor.execute("""
+                                UPDATE users 
+                                SET diamonds = diamonds + ? 
+                                WHERE username = ?
+                            """, (earnings, participant['username']))
+                    
                     # Actualizar estado de la apuesta
                     cursor.execute("""
                         UPDATE bets 
@@ -234,34 +305,14 @@ class Database:
                         WHERE id = ?
                     """, (winning_side, bet_id))
                     
-                    # Obtener participantes ganadores
-                    cursor.execute("""
-                        SELECT username, amount 
-                        FROM bet_participants 
-                        WHERE bet_id = ? AND side = ?
-                    """, (bet_id, winning_side))
-                    winners = cursor.fetchall()
-                    
-                    total_pool = bet['total_a'] + bet['total_b']
-                    winning_total = bet['total_a'] if winning_side == 'a' else bet['total_b']
-                    
-                    # Distribuir ganancias
-                    for winner in winners:
-                        proportion = winner['amount'] / winning_total
-                        earnings = round(total_pool * proportion)
-                        
-                        cursor.execute("""
-                            UPDATE users 
-                            SET diamonds = diamonds + ? 
-                            WHERE username = ?
-                        """, (earnings, winner['username']))
-                    
                     conn.commit()
                     return True, "Apuesta finalizada exitosamente"
+                    
                 except Exception as e:
                     conn.rollback()
                     print(f"Error en finalize_bet transaction: {e}")
                     return False, str(e)
+                
         except Exception as e:
             print(f"Error en finalize_bet: {e}")
             return False, str(e)
