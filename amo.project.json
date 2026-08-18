@@ -1,0 +1,14 @@
+{
+  "schema": "desarrollamo.project.v1",
+  "repository": "amoedo7/ApostAmo",
+  "name": "ApostAmo",
+  "ecosystem": "DesarrollAMO",
+  "type": "social-prototype",
+  "lifecycle": "historical-functional",
+  "visibility": "public",
+  "source_of_truth": "historical-snapshot",
+  "production_url": null,
+  "related": [],
+  "reviewed_at": "2026-08-18",
+  "notes": ["Virtual-points friendly betting prototype.", "Not a real-money gambling system and not production-certified."]
+}
