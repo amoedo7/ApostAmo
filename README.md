@@ -1,110 +1,68 @@
-# 🎲 ApostAmo
+# ApostAmo
 
-ApostAmo es una plataforma de apuestas amistosas donde los usuarios pueden crear y participar en apuestas utilizando diamantes virtuales. La plataforma está diseñada para ser divertida, segura y fácil de usar.
+Plataforma web experimental de **apuestas amistosas con diamantes virtuales**, creada dentro del ecosistema DesarrollAMO.
 
-## 🌟 Características
+## Estado
 
-- 💎 Sistema de diamantes virtuales
-- 👥 Creación de apuestas personalizadas
-- ⚖️ Sistema de juez imparcial
-- 📱 Diseño responsive para móviles y escritorio
-- 🔒 Sistema seguro de autenticación
-- 📊 Historial de apuestas y resultados
+**Prototipo histórico.** El repositorio contiene una implementación Flask con base de datos, templates, assets y configuración de despliegue. No se presenta como servicio de apuestas con dinero real.
 
-## 🚀 Tecnologías Utilizadas
+## Alcance original
 
-- Python 3.x
-- Flask (Framework web)
-- SQLite (Base de datos)
-- HTML/CSS/JavaScript
-- Render (Plataforma de despliegue)
+- cuentas de usuario;
+- saldo de diamantes virtuales;
+- creación de apuestas amistosas;
+- participación entre usuarios;
+- rol/enlace de juez para resolver resultados;
+- historial;
+- UI responsive;
+- backend Flask y persistencia SQLite.
 
-## 📋 Requisitos Previos
+## Importante
+
+Los “diamantes” son **puntos virtuales del prototipo**. Este proyecto no debe adaptarse automáticamente a dinero real, depósitos, retiros o apuestas reguladas sin un análisis legal, de seguridad y de cumplimiento específico para la jurisdicción correspondiente.
+
+## Stack histórico
+
+- Python / Flask;
+- SQLite;
+- HTML/CSS/JavaScript;
+- Render (`render.yaml`);
+- `server.py` como entrada principal.
+
+## Ejecución local
 
 ```bash
-python -m pip install -r requirements.txt
-```
-
-## 🛠️ Instalación y Configuración Local
-
-1. Clona el repositorio:
-```bash
-git clone [URL_DEL_REPOSITORIO]
-```
-
-2. Instala las dependencias:
-```bash
+git clone https://github.com/amoedo7/ApostAmo.git
+cd ApostAmo
+python -m venv .venv
+# activar entorno
 pip install -r requirements.txt
-```
-
-3. Ejecuta la aplicación:
-```bash
 python server.py
 ```
 
-## 📱 Uso
+## Estructura
 
-1. **Registro/Inicio de Sesión**
-   - Crea una cuenta nueva o inicia sesión
-   - Cada usuario nuevo recibe 1000 diamantes iniciales
-
-2. **Crear una Apuesta**
-   - Define el título y descripción
-   - Establece las opciones de apuesta
-   - Comparte el enlace con los participantes
-
-3. **Participar en Apuestas**
-   - Selecciona la cantidad de diamantes
-   - Elige tu lado de la apuesta
-   - Espera el veredicto del juez
-
-4. **Juez**
-   - Accede mediante el enlace especial de juez
-   - Determina el resultado de la apuesta
-   - Los diamantes se distribuyen automáticamente
-
-## 🌐 Despliegue
-
-La aplicación está desplegada en Render y puede accederse en:
-[https://apostamo.onrender.com](https://apostamo.onrender.com)
-
-## 🔄 Actualización del Repositorio
-
-Para actualizar el repositorio, utiliza el script `ActualizarGit.py`:
-```bash
-python ActualizarGit.py
-```
-
-## 📁 Estructura del Proyecto
-
-```
+```text
 ApostAmo/
-├── server.py           # Servidor principal Flask
-├── src/               # Código fuente
-│   └── database.py    # Manejo de base de datos
-├── templates/         # Plantillas HTML
-├── static/           # Archivos estáticos (CSS, JS, imágenes)
-├── requirements.txt   # Dependencias
-└── ActualizarGit.py  # Script de actualización Git
+├── server.py
+├── src/
+├── templates/
+├── static/
+├── requirements.txt
+├── render.yaml
+└── ActualizarGit.py
 ```
 
-## 🤝 Contribución
+## Antes de reutilizarlo
 
-Si deseas contribuir al proyecto:
-1. Haz un Fork del repositorio
-2. Crea una rama para tu característica
-3. Haz commit de tus cambios
-4. Empuja a la rama
-5. Abre un Pull Request
+Revisar autenticación, sesiones, dependencias, persistencia, rate limiting, CSRF, secretos, backups y cualquier endpoint que altere saldos virtuales.
 
-## 📝 Licencia
+La URL histórica de Render puede dejar de existir o apuntar a una versión distinta; no se considera fuente de verdad sin verificación.
 
-Este proyecto está bajo la Licencia MIT - ver el archivo LICENSE para más detalles.
+## Licencia
 
-## 👥 Autores
+El README anterior afirmaba MIT, pero no aparece un archivo `LICENSE` en la raíz actual. No asumir una licencia hasta definirla explícitamente.
 
-- El3imm - *Desarrollo Inicial*
+---
 
-## 📞 Soporte
-
-Para soporte o preguntas, por favor abre un issue en el repositorio. 
+**DesarrollAMO** · experimento de interacción social con puntos virtuales, preservado con su contexto.
